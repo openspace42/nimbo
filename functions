@@ -870,7 +870,6 @@ synthia-perform_installation() {
 	### dna-install_easyengine
 
 	dna-set_admin_email
-	dna-install_mail_notifications
 	dna-setup_backup_restore
 
 	dna-install_dependencies -p "bindfs"

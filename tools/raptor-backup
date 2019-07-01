@@ -180,7 +180,12 @@ then
 
     else
 
-    	mv "${tmp_backup_dir}"/* "${backup_local_storage_path}/latest"
+		if [ "${backup_locally_mode}" = "enabled" ]
+		then
+
+	    	mv "${tmp_backup_dir}"/* "${backup_local_storage_path}/latest"
+
+		fi
 
     	############################################################################
 
