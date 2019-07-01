@@ -888,31 +888,6 @@ synthia-perform_installation() {
 
 	dna-add_cron_job -n "${proj_name}-backup" -t "8 4 * * * " -c "bash ${tools_dir}/${proj_name}-backup"
 
-	sed -i "/Subsystem/c\Subsystem sftp internal-sftp" "${ssh_config_file}"
-
-	if ! grep -q "Match Group ${sftp_group}" "${ssh_config_file}"
-	then
-	    cat <<EOT >> "$ssh_config_file"
-
-Match Group $sftp_group
-ChrootDirectory /home/%u
-ForceCommand internal-sftp
-PasswordAuthentication yes
-PermitTunnel no
-AllowAgentForwarding no
-AllowTcpForwarding no
-X11Forwarding no
-EOT
-
-	fi
-
-	if ! grep -q "${sftp_group}" "/etc/group"
-	then
-	    addgroup "${sftp_group}"
-	fi
-
-	service ssh restart
-
 	############################################################################
 	############################################################################
 	############################################################################
