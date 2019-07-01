@@ -872,19 +872,6 @@ synthia-perform_installation() {
 	dna-set_admin_email
 	dna-setup_backup_restore
 
-	dna-install_dependencies -p "bindfs"
-
-	describe_setting() {
-
-	    dna-echo -m "Please specify any sites to exclude from your backups."
-	    dna-echo -m "Type in a comma separated list of websites to exclude."
-	    dna-echo -m "Example: | ${y-}example.org, hello.world, site-to.exclude.tld${n-} |."
-	    dna-echo -m "Enter | ${y-}null${n-} | to skip excluding any site."
-
-	}
-
-	dna-set_option -o "backup_exclude_sites" -p "backups/local" -d "y" -v "n"
-
 	dna-add_cron_job -n "${proj_name}-backup" -t "8 4 * * * " -c "bash ${tools_dir}/${proj_name}-backup"
 
 	############################################################################
