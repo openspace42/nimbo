@@ -32,6 +32,8 @@ synthia-define_vars() {
 	## performing a backup [such as '/var/www/' for nginx-related projects].
 	export backup_ref_dir="/home/user-data"
 
+	export backup_test_restore_mode="disabled"
+
 	############################################################################
 	############################################################################
 	############################################################################
