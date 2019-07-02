@@ -30,7 +30,7 @@ synthia-define_vars() {
 	## this is only the default, which will be suggested to the user during
 	## install, and it can be overridden.
 
-	export backup_test_restore_mode="disabled"
+	export backup_test_restore_mode_default="disabled"
 
 	## set this to 'n' if your project stores no data on end users' machines
 	## that could go lost during a re-install or update.
