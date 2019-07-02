@@ -26,17 +26,16 @@ synthia-define_vars() {
 
 	export backup_locally_mode_default="disabled"
 
+	## set this to 'disabled' to disable restore test during S3 backup.
+	## this is only the default, which will be suggested to the user during
+	## install, and it can be overridden.
+
+	export backup_test_restore_mode="disabled"
+
 	## set this to 'n' if your project stores no data on end users' machines
 	## that could go lost during a re-install or update.
 
 	export backup_prompt_during_install="n"
-
-	## set this to the directory that has the most impactful size when
-	## performing a backup [such as '/var/www/' for nginx-related projects].
-
-	export backup_ref_dir="/home/user-data"
-
-	export backup_test_restore_mode="disabled"
 
 	############################################################################
 	############################################################################
