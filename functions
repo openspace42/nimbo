@@ -243,10 +243,10 @@ synthia-backup_locally() {
 
 	backup_paths=$(echo ${backup_paths_default} | tr " " "\n")
 
-	for backup_path in ${backup_paths}
+	for this_backup_path in ${backup_paths}
 	do
 
-		rsync -aAXxL "${user_data_dir_path}" "${tmp_backup_data_dir}"
+		rsync -aAXxL "${this_backup_path}" "${tmp_backup_data_dir}"
 
 	done
 
