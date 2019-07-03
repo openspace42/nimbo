@@ -209,11 +209,18 @@ synthia-calculate_backup_size() {
 	## will affect backups [such as '/var/www/' for nginx-related projects].
 	## all sizes in MB.
 
-	dna-get_hostname
+	backup_paths=$(echo ${backup_paths_default} | tr " " "\n")
 
-	user_data_dir_size="$(du -sm {user_data_dir_path} | cut -f1)"
+	backup_size_estimate=0
 
-	backup_size_estimate="${user_data_dir_size}"
+	for this_backup_path in ${backup_paths}
+	do
+
+		this_backup_path_size="$(du -sm ${this_backup_path} | cut -f1)"
+
+		backup_size_estimate="$((${backup_size_estimate} + ${this_backup_path_size}))"
+
+	done
 
 }
 
