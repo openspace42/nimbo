@@ -750,6 +750,8 @@ synthia-perform_installation() {
 	################### Add your install-time functions here ###################
 	############################################################################
 
+	dna-link_tools
+
 	dna-set_admin_email
 	dna-setup_backup_restore
 
