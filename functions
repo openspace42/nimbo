@@ -237,16 +237,18 @@ synthia-backup_subloop() {
 
 synthia-backup_locally() {
 
-	## copy conf dir to $tmp_backup_dir.
+	## copy conf dir to $backup_tmp_dir.
 
-	cp -r "${conf_dir}" "${tmp_backup_conf_dir}"
+	cp -r "${conf_dir}" "${backup_tmp_conf_dir}"
 
 	backup_paths=$(echo ${backup_paths_default} | tr " " "\n")
 
 	for this_backup_path in ${backup_paths}
 	do
 
-		rsync -aAXxL "${this_backup_path}" "${tmp_backup_data_dir}"
+		this_backup_path_name="$(echo ${this_backup_path} | sed "s|/|-|g" | sed "s|^-||g" | sed "s|-$||g")"
+
+		rsync -aAXxL "${this_backup_path}" "${backup_tmp_data_dir}/${this_backup_path_name}"
 
 	done
 
@@ -298,6 +300,8 @@ synthia-backup() {
 	############################################################################
 
 	dna-backuprestore_backup_cleanup
+
+	############################################################################
 
 }
 
