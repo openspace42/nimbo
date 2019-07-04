@@ -246,7 +246,7 @@ synthia-backup_locally() {
 
 		this_backup_path_name="$(echo ${this_backup_path} | sed "s|/|-|g" | sed "s|^-||g" | sed "s|-$||g")"
 
-		rsync -aAXxL "${this_backup_path}" "${backup_tmp_name_conf_dir}/${this_backup_path_name}"
+		rsync -aAXxL "${this_backup_path}" "${backup_tmp_name_data_dir}/${this_backup_path_name}"
 
 	done
 
