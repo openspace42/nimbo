@@ -237,7 +237,7 @@ synthia-backup_subloop() {
 
 synthia-backup_locally() {
 
-	cp -r "${conf_dir}" "${backup_tmp_name_conf_dir}"
+	rsync -aAXxL "${conf_dir}" "${backup_tmp_name_conf_dir}"
 
 	backup_paths=$(echo ${backup_paths_default} | tr " " "\n")
 
