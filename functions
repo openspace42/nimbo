@@ -59,7 +59,7 @@ synthia-define_vars() {
 
 	#### set default backup paths [absolute, space separated].
 
-	export backup_paths_default="${user_data_dir_path}www /etc/ssl" ##dev
+	export backup_paths_default="${user_data_dir_path}/www /etc/ssl" ##dev
 
 	### ########################################################################
 
