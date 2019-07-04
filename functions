@@ -215,7 +215,7 @@ synthia-calculate_backup_size() {
 
 	### calculate backup_paths size.
 
-	dna_calculate_backup_paths_size
+	dna-calculate_backup_paths_size
 
 	### ########################################################################
 
