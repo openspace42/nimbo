@@ -144,11 +144,11 @@ fi
 
 ################################################################################
 
-dna-br_purge_incomplete_archives
+dna-backup_purge_incomplete_archives
 
-dna-br_purge_dirs
+dna-backup_purge_dirs
 
-dna-br_create_dirs restore
+dna-backup_create_dirs restore
 
 ################################################################################
 
@@ -183,7 +183,7 @@ then
 	then
 
 		dna-setup_backup_restore_s3 -s
-		dna-br_launch_restore -s
+		dna-launch_restore -s
 		rsync -aAXx --delete "$restore_file_path/conf/" "$conf_dir/"
 
 		echo "${g-}${b-}Bootstrap-mode restore from S3 complete.${x-}"
@@ -236,7 +236,7 @@ restore_from_standalone_content_validation() {
 ################################################################################
 ################################################################################
 
-dna-br_launch_restore
+dna-launch_restore
 
 ################################################################################
 
@@ -245,7 +245,7 @@ dna-br_launch_restore
 if [ ! "${skip_backup:-null}" = "y" ]
 then
 
-	dna-br_last_local_backup
+	dna-last_local_backup
 
 fi
 
@@ -253,7 +253,7 @@ fi
 
 restore_loop
 
-dna-br_purge_dirs
+dna-backup_purge_dirs
 
 echo "${g}${b}Restore complete!${x}"
 echo
