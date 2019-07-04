@@ -24,7 +24,7 @@ synthia-define_vars() {
 	## this is only the default, which will be suggested to the user during
 	## install, and it can be overridden.
 
-	export backup_locally_mode_default="disabled"
+	export backup_locally_mode_default="enabled" ##dev
 
 	## set this to 'disabled' to disable restore test during S3 backup.
 	## this is only the default, which will be suggested to the user during
@@ -51,7 +51,7 @@ synthia-define_vars() {
 
 	export user_data_dir_path="/home/user-data"
 
-	export backup_paths_default="/home/user-data /etc/ssl"
+	export backup_paths_default="/home/user-data/www /etc/ssl" ##dev
 
 	############################################################################
 	############################################################################
