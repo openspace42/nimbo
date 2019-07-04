@@ -10,52 +10,58 @@ dna_version="v0.3.14"
 
 synthia-define_vars() {
 
-	############################################################################
-	#################### Insert your initial variables here ####################
-	############################################################################
+	### define default variables
+
+	### ########################################################################
 
 	export proj_name="nimbo"
 	export author_name="openspace42"
 	export git_host="https://github.com"
 
-	## set this to 'disabled' to disable local backups and only upload to S3
-	## [useful if your project handles large amounts of data for example].
-	## S3 must be set up by the user or else backups will not work at all.
-	## this is only the default, which will be suggested to the user during
-	## install, and it can be overridden.
+	#### set this to 'disabled' to disable local backups and only upload to S3
+	#### [useful if your project handles large amounts of data for example].
+	#### S3 must be set up by the user or else backups will not work at all.
+	#### this is only the default, which will be suggested to the user during
+	#### install, and it can be overridden.
 
 	export backup_locally_mode_default="enabled" ##dev
 
-	## set this to 'disabled' to disable restore test during S3 backup.
-	## this is only the default, which will be suggested to the user during
-	## install, and it can be overridden.
+	#### set this to 'disabled' to disable restore test during S3 backup.
+	#### this is only the default, which will be suggested to the user during
+	#### install, and it can be overridden.
 
 	export backup_test_restore_mode_default="disabled"
 
-	## set this to 'n' if your project stores no data on end users' machines
-	## that could go lost during a re-install or update.
+	#### set this to 'n' if your project stores no data on end users' machines
+	#### that could go lost during a re-install or update.
 
 	export backup_prompt_during_install="n"
 
-	############################################################################
-	############################################################################
-	############################################################################
+	### ########################################################################
 
-	### Do NOT edit the following line
+	### define dna variables.
 
 	dna-define_vars
 
-	############################################################################
-	################## Insert your additional variables here ###################
-	############################################################################
+	### ########################################################################
+
+	### define any additional custom variables.
+
+	### ########################################################################
 
 	export user_data_dir_path="/home/user-data"
 
-	export backup_paths_default="/home/user-data/www /etc/ssl" ##dev
+	### ########################################################################
 
-	############################################################################
-	############################################################################
-	############################################################################
+	### define final default variables that depend on custom ones.
+
+	### ########################################################################
+
+	#### set default backup paths [absolute, space separated].
+
+	export backup_paths_default="${user_data_dir_path}www /etc/ssl" ##dev
+
+	### ########################################################################
 
 }
 
@@ -205,22 +211,25 @@ synthia-source_dna() {
 
 synthia-calculate_backup_size() {
 
-	## fetch sizes for the directories that have the most impactful sizes that
-	## will affect backups [such as '/var/www/' for nginx-related projects].
-	## all sizes in MB.
+	### ########################################################################
 
-	backup_paths=$(echo ${backup_paths_default} | tr " " "\n")
+	### calculate backup_paths size.
 
-	backup_size_estimate=0
+	dna_calculate_backup_paths_size
 
-	for this_backup_path in ${backup_paths}
-	do
+	### ########################################################################
 
-		this_backup_path_size="$(du -sm ${this_backup_path} | cut -f1)"
+	### calculate any additional custom size.
 
-		backup_size_estimate="$((${backup_size_estimate} + ${this_backup_path_size}))"
+	### ########################################################################
 
-	done
+	### ########################################################################
+
+	### add it up.
+
+	backup_total_size_estimate="$((${backup_paths_size_estimate} + ${patroni_ejabberd_db_size}))"
+
+	### ########################################################################
 
 }
 
@@ -237,18 +246,19 @@ synthia-backup_subloop() {
 
 synthia-backup_locally() {
 
-	rsync -aAXxL "${conf_dir}/" "${backup_tmp_name_conf_dir}"
+    operation_message="backing up locally"
+	dna-echo_operation -h
 
-	backup_paths=$(echo ${backup_paths_default} | tr " " "\n")
+	### backup backup paths locally.
 
-	for this_backup_path in ${backup_paths}
-	do
+	dna-backup_locally_data_backup_paths
 
-		this_backup_path_name="$(echo ${this_backup_path} | sed "s|/|_|g" | sed "s|^_||g" | sed "s|-$||g")"
+	### backup any additional custom item.
 
-		rsync -aAXxL "${this_backup_path}/" "${backup_tmp_name_data_dir}/${this_backup_path_name}"
+	### ########################################################################
+	### ########################################################################
 
-	done
+	dna-echo_operation -t
 
 }
 
@@ -256,20 +266,44 @@ synthia-backup() {
 
 	############################################################################
 
-	while getopts ":s" arguments; do
-	    case $arguments in
-			s)	skip_install_complete_check="-s"
+	### evaluate arguments.
+
+    while getopts ":lsri" arguments
+	do
+		case $arguments in
+			l)	export backup_locally_only="y"
 				;;
-			\?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
-				dna-exit
+			s)	export backup_s3_only="y"
 				;;
+			r)	export backup_last_before_restore="y"
+				;;
+			i)	export backup_skip_install_complete_check="y"
+				;;
+			\?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+		        dna-exit
+		        ;;
 		esac
 	done
-	OPTIND=1
+    OPTIND=1
+
+	if [ -n "${backup_last_before_restore-}" ]
+	then
+
+		if [ -n "${backup_s3_only-}" ]
+		then
+
+			dna-echo -e "Option | ${n-}backup_s3_only [-s]${r-} | is incompatible with option | ${n-}backup_last_before_restore [-r]${r-} |."
+			dna-exit
+
+		fi
+
+		export backup_locally_only="y"
+
+	fi
 
 	############################################################################
 
-	dna-backuprestore_check_set_lockfile
+	dna-check_set_lockfile
 
 	############################################################################
 
@@ -280,7 +314,7 @@ synthia-backup() {
 
 	############################################################################
 
-	if ! dna-backuprestore_backup
+	if ! dna-backup
 	then
 
 		dna-echo -e "backup subloop function exited with errors."
@@ -297,7 +331,7 @@ synthia-backup() {
 
 	############################################################################
 
-	dna-backuprestore_backup_cleanup
+	dna-backup_cleanup
 
 	############################################################################
 
