@@ -233,14 +233,23 @@ synthia-calculate_backup_size() {
 
 }
 
-synthia-backup_subloop() {
+synthia-backup_additional_backup_paths() {
 
-	backup_paths=$(echo ${backup_paths_default} | tr " " "\n")
+	### backup any additional custom item by populating their respective
+	### backup_paths.
 
-	for backup_path in ${backup_paths}
-	do
-		echo "${backup_path}"
-	done
+	operation_message="backing up any additional custom backup_path"
+	dna-echo_operation -h
+
+	### ########################################################################
+
+	#### postgresql dump.
+
+	pg_dump --dbname="postgresql://ejabberd:${patroni_ejabberd_password}@${public_ipv4}:5432/ejabberd" > "${tmp_project_dir}/pgdump/ejabberd.pgsql"
+
+	### ########################################################################
+
+	dna-echo_operation -t
 
 }
 
