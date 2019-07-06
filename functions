@@ -242,11 +242,6 @@ synthia-backup_additional_backup_paths() {
 	dna-echo_operation -h
 
 	### ########################################################################
-
-	#### postgresql dump.
-
-	pg_dump --dbname="postgresql://ejabberd:${patroni_ejabberd_password}@${public_ipv4}:5432/ejabberd" > "${tmp_project_dir}/pgdump/ejabberd.pgsql"
-
 	### ########################################################################
 
 	dna-echo_operation -t
