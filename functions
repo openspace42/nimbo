@@ -238,8 +238,7 @@ synthia-backup_additional_backup_paths() {
 	### backup any additional custom item by populating their respective
 	### backup_paths.
 
-	operation_message="backing up any additional custom backup_path"
-	dna-echo_operation -h
+	dna-echo_operation -h "backing up any additional custom backup_path"
 
 	### ########################################################################
 	### ########################################################################
@@ -250,8 +249,7 @@ synthia-backup_additional_backup_paths() {
 
 synthia-backup_locally() {
 
-    operation_message="backing up locally"
-	dna-echo_operation -h
+	dna-echo_operation -h "backing up locally"
 
 	### backup backup paths locally.
 
@@ -266,7 +264,7 @@ synthia-backup_locally() {
 
 }
 
-synthia-backup_pre_operation() {
+synthia-backup_pre_operations() {
 
 	### perform pre-backup operations.
 
