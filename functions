@@ -266,6 +266,32 @@ synthia-backup_locally() {
 
 }
 
+synthia-backup_pre_operation() {
+
+	### perform pre-backup operations.
+
+	dna-echo_operation -h "performing pre-backup operations"
+
+	service nginx stop || true
+	service php7.2-fpm stop || true
+
+	dna-echo_operation -t
+
+}
+
+synthia-backup_post_operations() {
+
+	dna-echo_operation -h "performing post-backup operations"
+
+	### perform post-backup operations.
+
+	service nginx start || true
+	service php7.2-fpm start || true
+
+	dna-echo_operation -t
+
+}
+
 synthia-backup() {
 
 	############################################################################
@@ -311,27 +337,15 @@ synthia-backup() {
 
 	############################################################################
 
-	## perform pre-backup operations
-
-	service nginx stop || true
-	service php7.2-fpm stop || true
-
-	############################################################################
-
 	if ! dna-backup
 	then
 
 		dna-echo -e "backup subloop function exited with errors."
 		dna-echo -m "continuing anyway to perform post-backup operations if any and exit backup function gracefully."
 
+		synthia-backup_post_operations
+
 	fi
-
-	############################################################################
-
-	## perform post-backup operations
-
-	service nginx start || true
-	service php7.2-fpm start || true
 
 	############################################################################
 
