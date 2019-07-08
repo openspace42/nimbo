@@ -1,16 +1,24 @@
 #!/usr/bin/env bash
 
-### openspace synthia bootstrap framework
-### [https://github.com/openspace42/synthia]
-### v0.3.3
+### ############################################################################
+
+### openspace42 synthia bootstrap framework.
+### [https://github.com/openspace42/synthia].
+### v0.4.0.
 
 dna_version="v0.3.14"
 
-################################################################################
+### ############################################################################
+
+### 1 | synthia global functions
+
+### ############################################################################
 
 synthia-define_vars() {
 
-	### define default variables
+	### define default variables.
+
+	### 1 | synthia global variables.
 
 	### ########################################################################
 
@@ -18,13 +26,23 @@ synthia-define_vars() {
 	export author_name="openspace42"
 	export git_host="https://github.com"
 
+	### ########################################################################
+
+	### 2 | synthia project_specific variales.
+
+	### ########################################################################
+
+	#### backup / restore.
+
+	#### #######################################################################
+
 	#### set this to 'disabled' to disable local backups and only upload to S3
 	#### [useful if your project handles large amounts of data for example].
 	#### S3 must be set up by the user or else backups will not work at all.
 	#### this is only the default, which will be suggested to the user during
 	#### install, and it can be overridden.
 
-	export backup_locally_mode_default="enabled" ##dev
+	export backup_locally_mode_default="disabled"
 
 	#### set this to 'disabled' to disable restore test during S3 backup.
 	#### this is only the default, which will be suggested to the user during
@@ -37,15 +55,15 @@ synthia-define_vars() {
 
 	export backup_prompt_during_install="n"
 
+	#### #######################################################################
+
 	### ########################################################################
 
-	### define dna variables.
+	### 3 | define dna variables.
 
 	dna-define_vars
 
-	### ########################################################################
-
-	### define any additional custom variables.
+	### 4 | define any additional custom variables.
 
 	### ########################################################################
 
@@ -53,19 +71,21 @@ synthia-define_vars() {
 
 	### ########################################################################
 
-	### define final default variables that depend on custom ones.
+	### 5 | define final variables that depend on custom ones.
 
 	### ########################################################################
 
 	#### set default backup paths [absolute, space separated].
 
-	export backup_paths_default="${user_data_dir_path}/www /etc/ssl" ##dev
+	export backup_paths_default="${user_data_dir_path} /etc/ssl"
 
 	### ########################################################################
 
 }
 
-################################################################################
+#### bootstrap functions.
+
+#### ###########################################################################
 
 synthia-define_formatting() {
 
@@ -203,92 +223,9 @@ synthia-source_dna() {
 
 }
 
-################################################################################
+#### ###########################################################################
 
-################################################################################
-######################## Insert project functions here #########################
-################################################################################
-
-synthia-calculate_backup_size() {
-
-	### ########################################################################
-
-	### calculate backup_paths size.
-
-	dna-calculate_backup_paths_size
-
-	### ########################################################################
-
-	### calculate any additional custom size.
-
-	### ########################################################################
-
-	### ########################################################################
-
-	### add it up.
-
-	backup_total_size_estimate="${backup_paths_size_estimate}"
-
-	### ########################################################################
-
-}
-
-synthia-backup_additional_backup_paths() {
-
-	### backup any additional custom item by populating their respective
-	### backup_paths.
-
-	dna-echo_operation -h "backing up any additional custom backup_path"
-
-	### ########################################################################
-	### ########################################################################
-
-	dna-echo_operation -t
-
-}
-
-synthia-backup_locally() {
-
-	dna-echo_operation -h "backing up locally"
-
-	### backup backup paths locally.
-
-	dna-backup_locally_data_backup_paths
-
-	### backup any additional custom item.
-
-	### ########################################################################
-	### ########################################################################
-
-	dna-echo_operation -t
-
-}
-
-synthia-backup_pre_operations() {
-
-	### perform pre-backup operations.
-
-	dna-echo_operation -h "performing pre-backup operations"
-
-	service nginx stop || true
-	service php7.2-fpm stop || true
-
-	dna-echo_operation -t
-
-}
-
-synthia-backup_post_operations() {
-
-	dna-echo_operation -h "performing post-backup operations"
-
-	### perform post-backup operations.
-
-	service nginx start || true
-	service php7.2-fpm start || true
-
-	dna-echo_operation -t
-
-}
+#### backup_restore_functions
 
 synthia-backup() {
 
@@ -350,6 +287,106 @@ synthia-backup() {
 	dna-backup_cleanup
 
 	############################################################################
+
+}
+
+#### ###########################################################################
+
+### ############################################################################
+
+### 2 | synthia project-specific functions.
+
+### ############################################################################
+
+#### backup / restore.
+
+#### ###########################################################################
+
+synthia-backup_pre_operations() {
+
+	### perform pre-backup operations.
+
+	dna-echo_operation -h "performing pre-backup operations"
+
+	### ########################################################################
+
+	service nginx stop || true
+	service php7.2-fpm stop || true
+
+	### ########################################################################
+
+	dna-echo_operation -t
+
+}
+
+synthia-backup_post_operations() {
+
+	dna-echo_operation -h "performing post-backup operations"
+
+	### perform post-backup operations.
+
+	### ########################################################################
+
+	service nginx start || true
+	service php7.2-fpm start || true
+
+	### ########################################################################
+
+	dna-echo_operation -t
+
+}
+
+synthia-calculate_backup_size() {
+
+	### ########################################################################
+
+	### calculate backup_paths size.
+
+	dna-calculate_backup_paths_size
+
+	### ########################################################################
+
+	### calculate any additional custom size.
+
+	### ########################################################################
+	### ########################################################################
+
+	### add it up.
+
+	backup_total_size_estimate="${backup_paths_size_estimate}"
+
+	### ########################################################################
+
+}
+
+synthia-backup_additional_paths() {
+
+	### backup any additional custom item by populating their respective
+	### backup_paths.
+
+	dna-echo_operation -h "backing up any additional custom backup_path"
+
+	### ########################################################################
+	### ########################################################################
+
+	dna-echo_operation -t
+
+}
+
+synthia-backup_locally() {
+
+	dna-echo_operation -h "backing up locally"
+
+	### backup backup paths locally.
+
+	dna-backup_locally_data_backup_paths
+
+	### backup any additional custom item.
+
+	### ########################################################################
+	### ########################################################################
+
+	dna-echo_operation -t
 
 }
 
@@ -792,15 +829,15 @@ restore_loop() {
 
 }
 
-################################################################################
-################################################################################
-################################################################################
+#### ###########################################################################
+
+### ############################################################################
+
+### 3 | synthia installation.
+
+### ############################################################################
 
 synthia-perform_installation() {
-
-	############################################################################
-	################### Add your install-time functions here ###################
-	############################################################################
 
 	dna-link_tools
 
@@ -809,10 +846,6 @@ synthia-perform_installation() {
 
 	dna-add_cron_job -n "${proj_name}-backup" -t "8 4 * * * " -c "bash ${tools_dir}/${proj_name}-backup"
 
-	############################################################################
-	############################################################################
-	############################################################################
-
 }
 
-################################################################################
+### ############################################################################
