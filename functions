@@ -22,7 +22,7 @@ synthia-define_vars() {
 
 	### ########################################################################
 
-	export proj_name="nimbo"
+	export project_name="nimbo"
 	export author_name="openspace42"
 	export git_host="https://github.com"
 
@@ -75,9 +75,12 @@ synthia-define_vars() {
 
 	### ########################################################################
 
-	#### set default backup paths [absolute, space separated].
+	#### set default backup paths.
+	### [absolute, mark whether existing or generated].
 
-	export backup_paths_default="${user_data_dir_path} /etc/ssl"
+	declare -gA backup_paths_default_array=(
+			[${user_data_dir_path}]="existing"
+		)
 
 	### ########################################################################
 
@@ -229,9 +232,9 @@ synthia-source_dna() {
 
 synthia-backup() {
 
-	############################################################################
-
 	### evaluate arguments.
+
+	### ########################################################################
 
     while getopts ":lsri" arguments
 	do
@@ -266,11 +269,9 @@ synthia-backup() {
 
 	fi
 
-	############################################################################
+	### ########################################################################
 
 	dna-check_set_lockfile
-
-	############################################################################
 
 	if ! dna-backup
 	then
@@ -282,11 +283,7 @@ synthia-backup() {
 
 	fi
 
-	############################################################################
-
 	dna-backup_cleanup
-
-	############################################################################
 
 }
 
@@ -359,12 +356,22 @@ synthia-calculate_backup_size() {
 
 }
 
-synthia-backup_additional_paths() {
+synthia-backup_generate_additional_paths() {
 
-	### backup any additional custom item by populating their respective
-	### backup_paths.
+	### generate backups for any additional custom item by populating their
+	### respective backup_paths.
 
 	dna-echo_operation -h "backing up any additional custom backup_path"
+
+	### ########################################################################
+
+	### create paths
+
+	dna-backup_generate_additional_paths_dirs
+
+	### ########################################################################
+
+	### perform backups of every item individually
 
 	### ########################################################################
 	### ########################################################################
@@ -376,6 +383,10 @@ synthia-backup_additional_paths() {
 synthia-backup_locally() {
 
 	dna-echo_operation -h "backing up locally"
+
+	### generate backups for any additional custom item
+
+	synthia-backup_generate_additional_paths
 
 	### backup backup paths locally.
 
@@ -844,7 +855,7 @@ synthia-perform_installation() {
 	dna-set_admin_email
 	dna-setup_backup_restore
 
-	dna-add_cron_job -n "${proj_name}-backup" -t "8 4 * * * " -c "bash ${tools_dir}/${proj_name}-backup"
+	dna-add_cron_job -n "${project_name}-backup" -t "8 4 * * * " -c "bash ${tools_dir}/${project_name}-backup"
 
 }
 
