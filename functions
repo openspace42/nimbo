@@ -271,7 +271,7 @@ synthia-backup() {
 
 	### ########################################################################
 
-	dna-check_set_lockfile
+	dna-backup_check_set_lockfile
 
 	if ! dna-backup
 	then
